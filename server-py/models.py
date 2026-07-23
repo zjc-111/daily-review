@@ -95,6 +95,7 @@ class PeriodQuery(BaseModel):
 
 class GenerateReviewRequest(BaseModel):
     date: str
+    content: str = ""
     importedMaterials: str | None = None
     mood: int | None = Field(default=None, ge=1, le=5)
     energy: int | None = Field(default=None, ge=1, le=5)
