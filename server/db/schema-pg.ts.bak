@@ -1,0 +1,93 @@
+/* eslint-disable */
+/** auto generated, do not edit */
+import { sql } from 'drizzle-orm';
+import { date, index, integer, jsonb, pgTable, text, uniqueIndex, uuid, varchar, customType } from "drizzle-orm/pg-core"
+
+const customTimestamptz = customType<{
+  data: Date;
+  driverData: string;
+  config: { precision?: number };
+}>({
+  dataType(config) {
+    const precision = typeof config?.precision !== 'undefined'
+      ? ` (${config.precision})`
+      : '';
+    return `timestamptz${precision}`;
+  },
+  toDriver(value: Date | string | number) {
+    if (value == null) return value as any;
+    if (typeof value === 'number') return new Date(value).toISOString();
+    if (typeof value === 'string') return value;
+    if (value instanceof Date) return value.toISOString();
+    throw new Error('Invalid timestamp value');
+  },
+  fromDriver(value: string | Date): Date {
+    if (value instanceof Date) return value;
+    return new Date(value);
+  },
+});
+
+export const aiReviews = pgTable("ai_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dailyEntryId: uuid("daily_entry_id"),
+  model: varchar("model", { length: 100 }).notNull().default('rule-engine'),
+  promptTokens: integer("prompt_tokens").default(0),
+  completionTokens: integer("completion_tokens").default(0),
+  createdAt: customTimestamptz("created_at", { precision: 6 }).notNull().default(sql`now()`),
+}, (table) => [
+  index("idx_ai_reviews_entry").on(table.dailyEntryId),
+]);
+
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  phone: varchar("phone", { length: 20 }).notNull().unique(),
+  smsCode: varchar("sms_code", { length: 6 }),
+  smsTokenExpireAt: customTimestamptz("sms_token_expire_at", { precision: 6 }),
+  createdAt: customTimestamptz("created_at", { precision: 6 }).notNull().default(sql`now()`),
+}, (table) => [
+  uniqueIndex("users_phone_key").on(table.phone),
+  index("idx_users_phone").on(table.phone),
+]);
+
+export const periodReviews = pgTable("period_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  periodType: varchar("period_type", { length: 20 }).notNull(),
+  periodLabel: varchar("period_label", { length: 100 }).notNull(),
+  periodStart: date("period_start").notNull(),
+  periodEnd: date("period_end").notNull(),
+  entryCount: integer("entry_count").notNull().default(0),
+  summary: text("summary").notNull(),
+  highlights: jsonb("highlights").default('[]'),
+  problems: jsonb("problems").default('[]'),
+  suggestions: jsonb("suggestions").default('[]'),
+  outlook: text("outlook"),
+  generatedAt: customTimestamptz("generated_at", { precision: 6 }).notNull().default(sql`now()`),
+  createdAt: customTimestamptz("created_at", { precision: 6 }).notNull().default(sql`now()`),
+}, (table) => [
+  index("idx_period_reviews_type_dates").on(table.periodType, table.periodStart),
+  uniqueIndex("idx_period_reviews_unique").on(table.periodType, table.periodStart),
+]);
+
+export const dailyEntries = pgTable("daily_entries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  date: date("date").notNull().unique(),
+  content: text("content").notNull(),
+  highlights: jsonb("highlights").default('[]'),
+  problems: jsonb("problems").default('[]'),
+  suggestions: jsonb("suggestions").default('[]'),
+  patterns: jsonb("patterns").default('[]'),
+  reviewGeneratedAt: customTimestamptz("review_generated_at", { precision: 6 }),
+  createdAt: customTimestamptz("created_at", { precision: 6 }).notNull().default(sql`now()`),
+  updatedAt: customTimestamptz("updated_at", { precision: 6 }).notNull().default(sql`now()`),
+  mood: integer("mood"),
+  energy: integer("energy"),
+}, (table) => [
+  uniqueIndex("daily_entries_date_key").on(table.date),
+  index("idx_daily_entries_date").on(table.date),
+]);
+
+// table aliases
+export const aiReviewsTable = aiReviews;
+export const dailyEntriesTable = dailyEntries;
+export const periodReviewsTable = periodReviews;
+export const usersTable = users;

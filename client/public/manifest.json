@@ -1,0 +1,17 @@
+{
+  "name": "Daily Review — 每日复盘",
+  "short_name": "复盘",
+  "description": "记录每日工作，AI 智能复盘。支持日/周/月/年四个维度的复盘分析。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBFBFA",
+  "theme_color": "#2383E2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
