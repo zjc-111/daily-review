@@ -10,3 +10,9 @@ services:
         value: "1"
       - key: DB_PATH
         value: data/app.db
+      - key: LLM_ENDPOINT
+        value: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+      - key: LLM_MODEL
+        value: qwen-plus
+      - key: AI_API_KEY
+        sync: false
