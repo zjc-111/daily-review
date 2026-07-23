@@ -19,9 +19,9 @@ SYSTEM_PROMPT = """你是一位专业的个人复盘教练，采用 KISS 框架�
 
 async def call_llm(content, imported_materials=None, date=None):
     import httpx
-    endpoint = os.getenv("VOLCANO_ENGINE_ENDPOINT") or "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
-    api_key = os.getenv("VOLCANO_ENGINE_API_KEY") or os.getenv("LLM_API_KEY") or os.getenv("AI_API_KEY")
-    model = os.getenv("VOLCANO_ENGINE_MODEL") or "doubao-1-5-pro-32k-250115"
+    endpoint = os.getenv("LLM_ENDPOINT") or os.getenv("VOLCANO_ENGINE_ENDPOINT") or "https://api.deepseek.com/v1/chat/completions"
+    api_key = os.getenv("AI_API_KEY") or os.getenv("LLM_API_KEY") or os.getenv("VOLCANO_ENGINE_API_KEY")
+    model = os.getenv("LLM_MODEL") or os.getenv("VOLCANO_ENGINE_MODEL") or "deepseek-chat"
     if not api_key:
         raise RuntimeError("LLM not configured")
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
